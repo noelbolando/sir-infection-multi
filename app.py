@@ -6,7 +6,6 @@ To initialize the app:
     solara run app.py
 """
 
-import math
 from mesa.visualization import Slider, SolaraViz, make_plot_component, make_space_component
 import solara
 
@@ -15,13 +14,10 @@ from model import State, VirusOnNetwork
 # Define how the agents are portrayed.
 def agent_portrayal(agent):
     node_color_dict = {
-        State.R_INFECTED: "tab:red",
-        State.R_SUSCEPTIBLE: "tab:green",
-        State.R_RESISTANT: "tab:gray",
-
-        State.L_INFECTED: "tab:blue",
-        State.L_SUSCEPTIBLE: "tab:green",
-        State.L_RESISTANT: "tab:gray"
+        State.INFECTED_GOP: "tab:red",
+        State.INFECTED_DEM: "tab:blue",
+        State.SUSCEPTIBLE: "tab:green",
+        State.RESISTANT: "tab:gray"
     }
     return {"color": node_color_dict[agent.state], "size": 100}
 
@@ -33,77 +29,63 @@ model_params = {
         "label": "Random Seed"
     },
     "num_nodes": Slider(
-        label="Number of Agents",
-        value=20,
+        label="Population Size",
+        value=10,
         min=10,
         max=50,
         step=1
     ),
     "avg_node_degree": Slider(
-        label="Avg Node Degree",
+        label="Level of Agent Socialization",
         value=3,
         min=3,
         max=8,
         step=1
     ),
-    "initial_r_outbreak_size": Slider(
-        label="Initial R Outbreak Size",
+    "gop_initial_outbreak_size": Slider(
+        label="Number of GOP Propoganda Agents",
         value=1,
         min=1,
         max=10,
         step=1
     ),
-    "initial_l_outbreak_size": Slider(
-        label="Initial L Outbreak Size",
+    "dem_initial_outbreak_size": Slider(
+        label="Number of Dem Propoganda Agents",
         value=1,
         min=1,
         max=10,
         step=1
     ),
-    "virus_r_spread_chance": Slider(
-        label="R Infection Rate",
+    "gop_virus_spread_chance": Slider(
+        label="GOP Propogranda Infection Rate",
         value=0.5,
         min=0.0,
         max=1.0,
         step=0.1
     ),
-    "virus_l_spread_chance": Slider(
-        label="L Infection Rate",
+    "dem_virus_spread_chance": Slider(
+        label="Dem Propogranda Infection Rate",
         value=0.5,
         min=0.0,
         max=1.0,
         step=0.1
     ),
-    "virus_check_r_frequency": Slider(
-        label="R Virus Check Frequency",
+    "virus_check_frequency": Slider(
+        label="Virus Checker",
         value=0.5,
         min=0.0,
         max=1.0,
         step=0.1
     ),
-    "virus_check_l_frequency": Slider(
-        label="L Virus Check Frequency",
-        value=0.5,
-        min=0.0,
-        max=1.0,
-        step=0.1
-    ),
-    "r_recovery_chance": Slider(
-        label="R Chance of Recovery",
-        value=0.5,
-        min=0.0,
-        max=1.0,
-        step=0.1
-    ),
-    "l_recovery_chance": Slider(
-        label="L Chance of Recovery",
+    "recovery_chance": Slider(
+        label="Chance of Recovery from Propoganda",
         value=0.5,
         min=0.0,
         max=1.0,
         step=0.1
     ),
     "gain_resistance_chance": Slider(
-        label="Chance of Gaining Resistance",
+        label="Chance of Gaining Resistance to Propoganda",
         value=0.5,
         min=0.0,
         max=1.0,
@@ -119,12 +101,7 @@ def post_process_lineplot(ax):
 
 SpacePlot = make_space_component(agent_portrayal)
 StatePlot = make_plot_component(
-    {"R Infected": "tab:red", 
-     "R Susceptible": "tab:green", 
-     "R Resistant": "tab:gray",
-     "L Infected": "tab:blue", 
-     "L Susceptible": "tab:green", 
-     "L Resistant": "tab:gray"},
+    {"Susceptible": "tab:green", "Resistant": "tab:gray"},
     post_process=post_process_lineplot
 )
 
@@ -138,7 +115,7 @@ page = SolaraViz(
         StatePlot
     ],
     model_params=model_params,
-    name="SIR Multi-Virus Model"
+    name="SIR Propoganda Spread Model"
 )
 
 # Initializing an instance of the web page

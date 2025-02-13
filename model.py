@@ -13,12 +13,12 @@ def number_state(model, state):
     return sum(1 for a in model.grid.get_all_cell_contents() if a.state is state)
 
 # Specific function to find the number of INFECTED agents.
-def gop_number_infected(model):
-    return number_state(model, State.INFECTED_GOP)
+def number_right_infected(model):
+    return number_state(model, State.INFECTEDRIGHT)
 
 # Specific function to find the other number of INFECTED agents.
-def dem_number_infected(model):
-    return number_state(model, State.INFECTED_DEM)
+def number_left_infected(model):
+    return number_state(model, State.INFECTEDLEFT)
 
 # Specific funtion to find the number of SUSCEPTIBLE agents.
 def number_susceptible(model):
@@ -64,8 +64,8 @@ class VirusOnNetwork(Model):
 
         self.datacollector = mesa.DataCollector(
             {
-                "Infected with GOP Propoganda": gop_number_infected,
-                "Infected with Dem Propoganda": dem_number_infected,
+                "Infected with Right-Leaning Propoganda": number_right_infected,
+                "Infected with Left-Leaning Propoganda": number_left_infected,
                 "Susceptible": number_susceptible,
                 "Resistant": number_resistant,
             }
@@ -89,12 +89,12 @@ class VirusOnNetwork(Model):
         infected_nodes = self.random.sample(list(self.G), self.initial_outbreak_size)
         # Randomly infect some of the agents based on the initial_outbreak_size variables
         for a in self.grid.get_cell_list_contents(infected_nodes):
-            a.state = State.INFECTED_GOP
+            a.state = State.INFECTEDRIGHT
         # Infect with Dem Propoganda
         infected_nodes = self.random.sample(list(self.G), self.initial_outbreak_size)
         # Randomly infect some of the agents based on the initial_outbreak_size variable.
         for a in self.grid.get_cell_list_contents(infected_nodes):
-            a.state = State.INFECTED_DEM
+            a.state = State.INFECTEDLEFT
         
         self.running = True
         self.datacollector.collect(self)

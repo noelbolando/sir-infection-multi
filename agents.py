@@ -8,8 +8,8 @@ from mesa import Agent
 class State(Enum):
     """Defining the initial state (number) of susceptible, infected, and resistant agents."""
     SUSCEPTIBLE = 0
-    INFECTED_GOP = 1 # Susceptible agents exposed to propoganda of gop_virus
-    INFECTED_DEM = 2 # Susceptible agents exposed to propoaganda of dem_virus
+    INFECTEDRIGHT = 1 # Susceptible agents exposed to propoganda of gop_virus
+    INFECTEDLEFT = 2 # Susceptible agents exposed to propoaganda of dem_virus
     RESISTANT = 3
 
 class VirusAgent(Agent):
@@ -51,9 +51,9 @@ class VirusAgent(Agent):
         ]
         for a in susceptible_neighbors:
             if self.random.random() < self.gop_virus_spread_chance:
-                a.state = State.INFECTED_GOP
+                a.state = State.INFECTEDRIGHT
             elif self.random.random() < self.dem_virus_spread_chance:
-                a.state = State.INFECTED_DEM
+                a.state = State.INFECTEDLEFT
     
     def try_gain_resistance(self):
         """Define how INFECTED agents become RESISTANT"""
@@ -62,29 +62,29 @@ class VirusAgent(Agent):
     
     def try_remove_infection(self):
         """Define whether an agent is SUSCEPTIBLE or INFECTED based on recovery_chance metric"""
-        if self.state == State.INFECTED_GOP:
+        if self.state == State.INFECTEDRIGHT:
             if self.random.random() < self.recovery_chance:
                 self.state = State.SUSCEPTIBLE
                 self.try_gain_resistance()
             else:
-                self.state = State.INFECTED_GOP
-        elif self.state == State.INFECTED_DEM:
+                self.state = State.INFECTEDRIGHT
+        elif self.state == State.INFECTEDLEFT:
             if self.random.random() < self.recovery_chance:
                 self.state = State.SUSCEPTIBLE
                 self.try_gain_resistance()
             else:
-                self.state = State.INFECTED_DEM
+                self.state = State.INFECTEDLEFT
 
 
     def try_check_situation(self):
         """Check to see if an INFECTED agent can become RESISTANT"""
         if (self.random.random() < self.virus_check_frequency) and (
-            self.state is State.INFECTED_GOP or State.INFECTED_DEM
+            self.state is State.INFECTEDRIGHT or State.INFECTEDLEFT
         ):
             self.try_remove_infection()
     
     def step(self):
         """Define the steps for agents within the model"""
-        if self.state is State.INFECTED_GOP or State.INFECTED_DEM:
+        if self.state is State.INFECTEDRIGHT or State.INFECTEDLEFT:
             self.try_to_infect_neighbors()
         self.try_check_situation()

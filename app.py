@@ -14,10 +14,10 @@ from model import State, VirusOnNetwork
 # Define how the agents are portrayed.
 def agent_portrayal(agent):
     node_color_dict = {
-        State.INFECTED_GOP: "tab:red",
-        State.INFECTED_DEM: "tab:blue",
+        State.INFECTEDRIGHT: "tab:red",
+        State.INFECTEDLEFT: "tab:blue",
         State.SUSCEPTIBLE: "tab:green",
-        State.RESISTANT: "tab:gray"
+        State.RESISTANT: "tab:purple"
     }
     return {"color": node_color_dict[agent.state], "size": 100}
 
@@ -43,28 +43,28 @@ model_params = {
         step=1
     ),
     "gop_initial_outbreak_size": Slider(
-        label="Number of GOP Propoganda Agents",
+        label="Number of Right Propoganda Agents",
         value=1,
         min=1,
         max=10,
         step=1
     ),
     "dem_initial_outbreak_size": Slider(
-        label="Number of Dem Propoganda Agents",
+        label="Number of Left Propoganda Agents",
         value=1,
         min=1,
         max=10,
         step=1
     ),
     "gop_virus_spread_chance": Slider(
-        label="GOP Propogranda Infection Rate",
+        label="Left-Leaning Propogranda Infection Rate",
         value=0.5,
         min=0.0,
         max=1.0,
         step=0.1
     ),
     "dem_virus_spread_chance": Slider(
-        label="Dem Propogranda Infection Rate",
+        label="Right-Leaning Propogranda Infection Rate",
         value=0.5,
         min=0.0,
         max=1.0,
@@ -101,7 +101,10 @@ def post_process_lineplot(ax):
 
 SpacePlot = make_space_component(agent_portrayal)
 StatePlot = make_plot_component(
-    {"Susceptible": "tab:green", "Resistant": "tab:gray"},
+    {"Infected with Right-Leaning Propoganda": "tab:red",
+     "Infected with Left-Leaning Propoganda": "tab:blue",  
+     "Susceptible": "tab:green", 
+     "Resistant": "tab:purple"},
     post_process=post_process_lineplot
 )
 

@@ -8,8 +8,8 @@ from mesa import Agent
 class State(Enum):
     """Defining the initial state (number) of susceptible, infected, and resistant agents."""
     SUSCEPTIBLE = 0
-    INFECTEDRIGHT = 1 # Susceptible agents exposed to propoganda of gop_virus
-    INFECTEDLEFT = 2 # Susceptible agents exposed to propoaganda of dem_virus
+    INFECTEDRED = 1 # Susceptible agents exposed to propaganda of red virus
+    INFECTEDBLUE = 2 # Susceptible agents exposed to propaganda of blue virus
     RESISTANT = 3
 
 class VirusAgent(Agent):
@@ -20,9 +20,9 @@ class VirusAgent(Agent):
             model,
             initial_state,
 
-            gop_virus_spread_chance, # The probability of a SUSCEPTIBLE agent becoming INFECTED
+            red_virus_spread_chance, # The probability of a SUSCEPTIBLE agent becoming INFECTED
             virus_check_frequency, # A function to check if SUSCEPTIBLE agents have become INFECTED
-            dem_virus_spread_chance, # The probability of a SUSCEPTIBLE agent becoming INFECTED
+            blue_virus_spread_chance, # The probability of a SUSCEPTIBLE agent becoming INFECTED
             recovery_chance, # The probability of an INFECTED agent recovering. Note that this does not guarantee becoming RESISTANT 
             gain_resistance_chance, # The probability of an INFECTED agent becoming RESISTANT
     ):
@@ -32,9 +32,9 @@ class VirusAgent(Agent):
         self.state = initial_state
 
         # Define the properties of the agents
-        self.gop_virus_spread_chance = gop_virus_spread_chance
+        self.red_virus_spread_chance = red_virus_spread_chance
         self.virus_check_frequency = virus_check_frequency
-        self.dem_virus_spread_chance = dem_virus_spread_chance
+        self.blue_virus_spread_chance = blue_virus_spread_chance
         self.recovery_chance = recovery_chance
         self.gain_resistance_chance = gain_resistance_chance
 
@@ -50,10 +50,10 @@ class VirusAgent(Agent):
             if agent.state is State.SUSCEPTIBLE
         ]
         for a in susceptible_neighbors:
-            if self.random.random() < self.gop_virus_spread_chance:
-                a.state = State.INFECTEDRIGHT
-            elif self.random.random() < self.dem_virus_spread_chance:
-                a.state = State.INFECTEDLEFT
+            if self.random.random() < self.red_virus_spread_chance:
+                a.state = State.INFECTEDRED
+            elif self.random.random() < self.blue_virus_spread_chance:
+                a.state = State.INFECTEDBLUE
     
     def try_gain_resistance(self):
         """Define how INFECTED agents become RESISTANT"""
@@ -62,29 +62,29 @@ class VirusAgent(Agent):
     
     def try_remove_infection(self):
         """Define whether an agent is SUSCEPTIBLE or INFECTED based on recovery_chance metric"""
-        if self.state == State.INFECTEDRIGHT:
+        if self.state == State.INFECTEDRED:
             if self.random.random() < self.recovery_chance:
                 self.state = State.SUSCEPTIBLE
                 self.try_gain_resistance()
             else:
-                self.state = State.INFECTEDRIGHT
-        elif self.state == State.INFECTEDLEFT:
+                self.state = State.INFECTEDRED
+        elif self.state == State.INFECTEDBLUE:
             if self.random.random() < self.recovery_chance:
                 self.state = State.SUSCEPTIBLE
                 self.try_gain_resistance()
             else:
-                self.state = State.INFECTEDLEFT
+                self.state = State.INFECTEDBLUE
 
 
     def try_check_situation(self):
         """Check to see if an INFECTED agent can become RESISTANT"""
         if (self.random.random() < self.virus_check_frequency) and (
-            self.state is State.INFECTEDRIGHT or State.INFECTEDLEFT
+            self.state is State.INFECTEDRED or State.INFECTEDBLUE
         ):
             self.try_remove_infection()
     
     def step(self):
         """Define the steps for agents within the model"""
-        if self.state is State.INFECTEDRIGHT or State.INFECTEDLEFT:
+        if self.state is State.INFECTEDRED or State.INFECTEDBLUE:
             self.try_to_infect_neighbors()
         self.try_check_situation()

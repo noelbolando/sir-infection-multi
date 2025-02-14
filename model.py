@@ -13,12 +13,12 @@ def number_state(model, state):
     return sum(1 for a in model.grid.get_all_cell_contents() if a.state is state)
 
 # Specific function to find the number of INFECTED agents.
-def number_right_infected(model):
-    return number_state(model, State.INFECTEDRIGHT)
+def number_red_infected(model):
+    return number_state(model, State.INFECTEDRED)
 
 # Specific function to find the other number of INFECTED agents.
-def number_left_infected(model):
-    return number_state(model, State.INFECTEDLEFT)
+def number_blue_infected(model):
+    return number_state(model, State.INFECTEDBLUE)
 
 # Specific funtion to find the number of SUSCEPTIBLE agents.
 def number_susceptible(model):
@@ -36,10 +36,10 @@ class VirusOnNetwork(Model):
             self,
             num_nodes=10,
             avg_node_degree=3,
-            gop_initial_outbreak_size=1,
-            dem_initial_outbreak_size=1,
-            gop_virus_spread_chance=0.4,
-            dem_virus_spread_chance=0.4,
+            red_initial_outbreak_size=1,
+            blue_initial_outbreak_size=1,
+            red_virus_spread_chance=0.4,
+            blue_virus_spread_chance=0.4,
             virus_check_frequency=0.4,
             recovery_chance=0.3,
             gain_resistance_chance=0.5,
@@ -51,21 +51,21 @@ class VirusOnNetwork(Model):
         self.G = nx.erdos_renyi_graph(n=self.num_nodes, p=prob)
         self.grid = mesa.space.NetworkGrid(self.G)
 
-        self.gop_initial_outbreak_size = gop_initial_outbreak_size
-        self.dem_initial_outbreak_size = dem_initial_outbreak_size
-        initial_outbreak_size = self.gop_initial_outbreak_size + self.dem_initial_outbreak_size
+        self.red_initial_outbreak_size = red_initial_outbreak_size
+        self.blue_initial_outbreak_size = blue_initial_outbreak_size
+        initial_outbreak_size = self.red_initial_outbreak_size + self.blue_initial_outbreak_size
         self.initial_outbreak_size = (initial_outbreak_size if initial_outbreak_size <= num_nodes else num_nodes)
 
-        self.gop_virus_spread_chance = gop_virus_spread_chance
-        self.dem_virus_spread_chance = dem_virus_spread_chance
+        self.red_virus_spread_chance = red_virus_spread_chance
+        self.blue_virus_spread_chance = blue_virus_spread_chance
         self.virus_check_frequency = virus_check_frequency
         self.recovery_chance = recovery_chance
         self.gain_resistance_chance = gain_resistance_chance
 
         self.datacollector = mesa.DataCollector(
             {
-                "Infected with Right-Leaning Propoganda": number_right_infected,
-                "Infected with Left-Leaning Propoganda": number_left_infected,
+                "Infected by Red Propaganda": number_red_infected,
+                "Infected by Blue Propaganda": number_blue_infected,
                 "Susceptible": number_susceptible,
                 "Resistant": number_resistant,
             }
@@ -76,8 +76,8 @@ class VirusOnNetwork(Model):
             a = VirusAgent(
                 self,
                 State.SUSCEPTIBLE,
-                self.gop_virus_spread_chance,
-                self.dem_virus_spread_chance,
+                self.red_virus_spread_chance,
+                self.blue_virus_spread_chance,
                 self.virus_check_frequency,
                 self.recovery_chance,
                 self.gain_resistance_chance
@@ -85,16 +85,16 @@ class VirusOnNetwork(Model):
 
             self.grid.place_agent(a, node)
 
-        # Infect with GOP Propaganda
+        # Infect with Red Propaganda
         infected_nodes = self.random.sample(list(self.G), self.initial_outbreak_size)
         # Randomly infect some of the agents based on the initial_outbreak_size variables
         for a in self.grid.get_cell_list_contents(infected_nodes):
-            a.state = State.INFECTEDRIGHT
-        # Infect with Dem Propoganda
+            a.state = State.INFECTEDRED
+        # Infect with Blue Propaganda
         infected_nodes = self.random.sample(list(self.G), self.initial_outbreak_size)
         # Randomly infect some of the agents based on the initial_outbreak_size variable.
         for a in self.grid.get_cell_list_contents(infected_nodes):
-            a.state = State.INFECTEDLEFT
+            a.state = State.INFECTEDBLUE
         
         self.running = True
         self.datacollector.collect(self)

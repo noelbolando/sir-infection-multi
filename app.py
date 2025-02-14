@@ -14,8 +14,8 @@ from model import State, VirusOnNetwork
 # Define how the agents are portrayed.
 def agent_portrayal(agent):
     node_color_dict = {
-        State.INFECTEDRIGHT: "tab:red",
-        State.INFECTEDLEFT: "tab:blue",
+        State.INFECTEDRED: "tab:red",
+        State.INFECTEDBLUE: "tab:blue",
         State.SUSCEPTIBLE: "tab:green",
         State.RESISTANT: "tab:purple"
     }
@@ -42,29 +42,29 @@ model_params = {
         max=8,
         step=1
     ),
-    "gop_initial_outbreak_size": Slider(
-        label="Number of Right Propoganda Agents",
+    "red_initial_outbreak_size": Slider(
+        label="Number of Red Propaganda Agents",
         value=1,
         min=1,
         max=10,
         step=1
     ),
-    "dem_initial_outbreak_size": Slider(
-        label="Number of Left Propoganda Agents",
+    "blue_initial_outbreak_size": Slider(
+        label="Number of Blue Propaganda Agents",
         value=1,
         min=1,
         max=10,
         step=1
     ),
-    "gop_virus_spread_chance": Slider(
-        label="Left-Leaning Propogranda Infection Rate",
+    "red_virus_spread_chance": Slider(
+        label="Red Propagranda Infection Rate",
         value=0.5,
         min=0.0,
         max=1.0,
         step=0.1
     ),
-    "dem_virus_spread_chance": Slider(
-        label="Right-Leaning Propogranda Infection Rate",
+    "blue_virus_spread_chance": Slider(
+        label="Blue Propagranda Infection Rate",
         value=0.5,
         min=0.0,
         max=1.0,
@@ -78,14 +78,14 @@ model_params = {
         step=0.1
     ),
     "recovery_chance": Slider(
-        label="Chance of Recovery from Propoganda",
+        label="Chance of Recovery from Propaganda",
         value=0.5,
         min=0.0,
         max=1.0,
         step=0.1
     ),
     "gain_resistance_chance": Slider(
-        label="Chance of Gaining Resistance to Propoganda",
+        label="Chance of Gaining Resistance to Propaganda",
         value=0.5,
         min=0.0,
         max=1.0,
@@ -101,8 +101,8 @@ def post_process_lineplot(ax):
 
 SpacePlot = make_space_component(agent_portrayal)
 StatePlot = make_plot_component(
-    {"Infected with Right-Leaning Propoganda": "tab:red",
-     "Infected with Left-Leaning Propoganda": "tab:blue",  
+    {"Infected by Red Propaganda": "tab:red",
+     "Infected by Blue Propaganda": "tab:blue",  
      "Susceptible": "tab:green", 
      "Resistant": "tab:purple"},
     post_process=post_process_lineplot
@@ -118,7 +118,7 @@ page = SolaraViz(
         StatePlot
     ],
     model_params=model_params,
-    name="SIR Propoganda Spread Model"
+    name="SIR Propaganda Spread Model"
 )
 
 # Initializing an instance of the web page
